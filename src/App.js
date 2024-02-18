@@ -34,8 +34,7 @@ function App() {
             color="red"
             setCroppedImage={setCroppedImage}
           />
-          <button onClick={()=>saveCallback()}>Crop</button>
-          <img src={croppedImage} alt="img" style={{margin:30}} />
+          <button onClick={()=>saveCallback()} style={{marginTop:20}}>Crop</button>
         </div>
       ) : (
         <div>

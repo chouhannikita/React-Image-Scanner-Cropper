@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 export const Handle = ({
   idx,
@@ -14,33 +14,57 @@ export const Handle = ({
     x: x - radius / 2,
     y: y - radius / 2,
   });
-
-  const calculateNewHandlePosition = (e) => {
+const [isTouch,setIsTouch] = useState(false)
+  const calculateNewHandlePosition = (clientX, clientY) => {
     const rect = cropCanvasRef?.current?.getBoundingClientRect();
-    let newX = e.clientX;
-    let newY = e.clientY;
+    let newX ;
+    let newY ;
+    if(isTouch){
+      newX = clientX/0.7;
+      newY = clientY/0.7;
+    }
+    else{
+      newX = clientX;
+      newY = clientY;
+    }
     if (rect) {
       newX -= rect.left;
       newY -= rect.top;
-    }
-    updateHandles(idx, newX, newY);
+  }
+    updateHandles(idx, newX, newY,isTouch);
     setCenter({ x: newX - radius / 2, y: newY - radius / 2 });
   };
 
   const handleDrag = (e) => {
     e.preventDefault();
-    calculateNewHandlePosition(e);
+    calculateNewHandlePosition(e.clientX, e.clientY);
+  };
+
+  const handleTouchMove = (e) => {
+    setIsTouch(false)
+    setIsTouch(true)
+    const touch = e.touches[0];
+    calculateNewHandlePosition(touch.clientX, touch.clientY);
   };
 
   const handleDragEnd = (e) => {
+    setIsTouch(false)
     e.preventDefault();
-    calculateNewHandlePosition(e);
+    calculateNewHandlePosition(e.clientX, e.clientY);
+  };
+
+  const handleTouchEnd = (e) => {
+    setIsTouch(true)
+    const touch = e.changedTouches[0];
+    calculateNewHandlePosition(touch.clientX, touch.clientY);
   };
 
   return (
     <div
       draggable={`${draggable}`}
       onDrag={handleDrag}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       onDragStart={(e) => !draggable && e.preventDefault()}
       onDragEnd={handleDragEnd}
       className="handle"
@@ -50,6 +74,7 @@ export const Handle = ({
         width: radius,
         height: radius,
         backgroundColor: color,
-      }}></div>
+      }}
+    ></div>
   );
 };

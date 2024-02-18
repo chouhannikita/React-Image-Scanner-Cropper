@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Handle } from "./Handle";
-
+import "../index.css"
 const Canvas = ({
   width,
   height,
@@ -13,6 +13,7 @@ const Canvas = ({
   const imageCanvasRef = useRef(null);
   const cropCanvasRef = useRef(null);
   const [drag,setDrag] = useState(false)
+  const [touch,setTouch] = useState(false)
   const [coordinates, setCoordinates] = useState([
     { x: 0, y: 0, radius: radius, color: color },
     { x: 200, y: 0, radius: radius, color: color },
@@ -128,7 +129,8 @@ const Canvas = ({
   }, [coordinates]);
 
   
-  const updateCoordinates = (idx, x, y) => {
+  const updateCoordinates = (idx, x, y,isTouch) => {
+    setTouch(isTouch)
     const handlesCopy = [...coordinates];
     setDrag(true)
     handlesCopy[idx] = { ...handlesCopy[idx], x: x, y: y };
@@ -137,7 +139,7 @@ const Canvas = ({
 
   return (
     <div
-      className="react-polygon-bounding-box"  style={{ height: height, width: width,margin:100}} >
+      className="react-polygon-bounding-box"  style={{ height: height, width: width,zoom:touch ? 0.7:''}} >
       <canvas
         style={{ height: height, width: width }}
         className="react-polygon-image-canvas"
@@ -145,7 +147,7 @@ const Canvas = ({
         ref={imageCanvasRef}
       />
       <canvas
-        style={{ height: "100%", width: "100%",objectFit:"cover"}}
+        style={{ height: "100%", width: "100%",objectFit:"cover",zoom:touch ? 0.7:''}}
         className="react-polygon-crop-canvas"
         ref={cropCanvasRef}
       />
